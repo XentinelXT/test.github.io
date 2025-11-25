@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Perpustakaan Online — Demo</title>
+    <style>
+         :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9aa7b2;
+            --accent: #6ee7b7;
+            --danger: #ff6b6b
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial
+        }
+        
+        body {
+            margin: 0;
+            background: radial-gradient(1000px 400px at 10% 10%, rgba(110, 231, 183, 0.06), transparent), linear-gradient(180deg, #071022 0%, #071426 100%);
+            color: #e6eef6;
+            min-height: 100vh
+        }
+        
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03)
+        }
+        
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+        
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #042029
+        }
+        
+        .title {
+            font-size: 18px;
+            font-weight: 700
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted)
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+        
+        button,
+        select {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: inherit;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+        
+        button.primary {
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            border: none;
+            color: #042029
+        }
+        
+        main {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            padding: 24px
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03)
+        }
+        
+        .card {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.02)
+        }
+        
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px
+        }
+        
+        input,
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: inherit
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px
+        }
+        
+        .book {
+            padding: 12px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+            border: 1px solid rgba(255, 255, 255, 0.03)
+        }
+        
+        .book h4 {
+            margin: 0 0 6px
+        }
+        
+        .muted {
+            color: var(--muted)
+        }
+        
+        .small {
+            font-size: 13px
+        }
+        
+        .borrow-btn {
+            margin-top: 8px
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px
+        }
+        
+        .due-soon {
+            background: rgba(255, 183, 77, 0.12);
+            color: #ffb86b
+        }
+        
+        .overdue {
+            background: rgba(255, 107, 107, 0.12);
+            color: var(--danger)
+        }
+        
+        footer {
+            padding: 20px 28px;
+            color: var(--muted);
+            font-size: 13px
+        }
+        /* responsive */
+        
+        @media(max-width:920px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 12px
+            }
+            .sidebar {
+                order: 2
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">
+            <div class="logo">LB</div>
+            <div>
+                <div class="title">Perpustakaan Online — Demo</div>
+                <div class="subtitle">Daftarkan akun, login, dan pinjam buku secara digital</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div id="userInfo" class="muted small">Belum masuk</div>
+            <button id="btnShowLogin">Login / Register</button>
+            <button id="btnLogout" style="display:none">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <aside class="sidebar">
+            <div class="card">
+                <h3>Profil</h3>
+                <div id="profileArea" class="muted small">Silakan login untuk melihat profil.</div>
+            </div>
+
+            <div class="card">
+                <h3>Pinjaman Aktif</h3>
+                <div id="borrowList">Tidak ada pinjaman.</div>
+            </div>
+
+            <div class="card">
+                <h3>Aturan Pinjam</h3>
+                <ul class="muted small">
+                    <li>Harus memiliki akun untuk meminjam</li>
+                    <li>Durasi pinjam pilihan: 7, 14, atau 21 hari</li>
+                    <li>Maksimum pinjaman bersamaan: 5 buku</li>
+                    <li>Bisa mengembalikan lebih awal</li>
+                </ul>
+            </div>
+        </aside>
+
+        <section>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                        <h2 style="margin:0">Katalog Buku</h2>
+                        <div class="muted small">Pilih buku lalu tekan Pinjam</div>
+                    </div>
+                    <div>
+                        <input id="searchInput" placeholder="Cari judul atau penulis" style="width:260px" />
+                    </div>
+                </div>
+
+                <div style="margin-top:14px">
+                    <div class="books-grid" id="booksGrid"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Riwayat & Kelola</h3>
+                <div id="historyArea" class="muted small">Riwayat peminjaman akan muncul di sini.</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>Demo: data disimpan di browser (localStorage). Untuk produksi butuh backend dan database nyata.</footer>
+
+    <!-- Modal sederhana -->
+    <div id="modal" style="position:fixed;inset:0;background:rgba(2,6,12,0.6);display:none;align-items:center;justify-content:center;padding:20px">
+        <div style="width:420px;max-width:96%;background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)">
+            <div id="modalContent"></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px;gap:8px">
+                <button id="modalCancel">Batal</button>
+                <button id="modalOk" class="primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ======= Simple client-only system using localStorage =======
+               - Users: {username, displayName, passwordHash}
+               - Books: {id,title,author,description,copies}
+               - Borrows: {id,username,bookId,borrowDate,dueDate,returned}
+               Note: For real app, implement proper backend, hashed passwords, and auth tokens.
+            */
+
+        // Utilities
+        const $ = q => document.querySelector(q)
+        const nowISO = () => new Date().toISOString()
+        const daysToMs = d => d * 24 * 60 * 60 * 1000
+
+        // Storage helpers
+        const load = (k, fallback) => {
+            try {
+                const v = localStorage.getItem(k);
+                return v ? JSON.parse(v) : fallback
+            } catch (e) {
+                return fallback
+            }
+        }
+        const save = (k, v) => localStorage.setItem(k, JSON.stringify(v))
+
+        // Keys
+        const K_USERS = 'lib_users'
+        const K_CURRENT = 'lib_currentUser'
+        const K_BOOKS = 'lib_books'
+        const K_BORROWS = 'lib_borrows'
+
+        // Default data (if no books yet)
+        function ensureDefaults() {
+            if (!load(K_BOOKS, null)) {
+                const sample = [{
+                    id: 1,
+                    title: 'Belajar JavaScript Modern',
+                    author: 'Andi Saputra',
+                    description: 'Pengantar praktis ke JS modern',
+                    copies: 3
+                }, {
+                    id: 2,
+                    title: 'Dasar-Dasar Pemrograman Python',
+                    author: 'Siti Aulia',
+                    description: 'Mulai pemrograman dengan Python',
+                    copies: 4
+                }, {
+                    id: 3,
+                    title: 'Sejarah Indonesia',
+                    author: 'Prof. Budi',
+                    description: 'Ringkasan penting sejarah RI',
+                    copies: 2
+                }, {
+                    id: 4,
+                    title: 'Jaringan Komputer',
+                    author: 'R. Nugroho',
+                    description: 'Teori dan praktik jaringan',
+                    copies: 1
+                }, {
+                    id: 5,
+                    title: 'Pengantar AI',
+                    author: 'Maya Putri',
+                    description: 'Konsep dasar Artificial Intelligence',
+                    copies: 2
+                }]
+                save(K_BOOKS, sample)
+            }
+            if (!load(K_USERS, null)) save(K_USERS, [])
+            if (!load(K_BORROWS, null)) save(K_BORROWS, [])
+        }
+
+        ensureDefaults()
+
+        // Basic (not cryptographically secure) hash for demo
+        function simpleHash(s) {
+            let h = 0;
+            for (let i = 0; i < s.length; i++) {
+                h = (h << 5) - h + s.charCodeAt(i);
+                h |= 0
+            }
+            return String(h)
+        }
+
+        // Auth
+        function registerUser(username, displayName, password) {
+            const users = load(K_USERS, [])
+            if (users.find(u => u.username === username)) return {
+                ok: false,
+                msg: 'Username sudah dipakai'
+            }
+            if (password.length < 6) return {
+                ok: false,
+                msg: 'Password minimal 6 karakter'
+            }
+            users.push({
+                username,
+                displayName,
+                passwordHash: simpleHash(password)
+            })
+            save(K_USERS, users)
+            return {
+                ok: true
+            }
+        }
+
+        function loginUser(username, password) {
+            const users = load(K_USERS, [])
+            const u = users.find(x => x.username === username && x.passwordHash === simpleHash(password))
+            if (!u) return {
+                ok: false,
+                msg: 'Username atau password salah'
+            }
+            save(K_CURRENT, {
+                username: u.username,
+                displayName: u.displayName
+            })
+            return {
+                ok: true,
+                user: {
+                    username: u.username,
+                    displayName: u.displayName
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem(K_CURRENT);
+            renderAll()
+        }
+
+        function getCurrent() {
+            return load(K_CURRENT, null)
+        }
+
+        // Books
+        function getBooks() {
+            return load(K_BOOKS, [])
+        }
+
+        // Borrows
+        function getBorrows() {
+            return load(K_BORROWS, [])
+        }
+
+        function userActiveBorrowsCount(username) {
+            return getBorrows().filter(b => b.username === username && !b.returned).length
+        }
+
+        function borrowBook(username, bookId, durationDays) {
+            const books = getBooks();
+            const b = books.find(x => x.id === bookId)
+            if (!b) return {
+                    ok: false,
+                    msg: 'Buku tidak ditemukan'
+                }
+                // available copies count = copies - borrowedCount(not returned)
+            const borrowedCount = getBorrows().filter(x => x.bookId === bookId && !x.returned).length
+            if (borrowedCount >= b.copies) return {
+                ok: false,
+                msg: 'Tidak ada salinan tersedia saat ini'
+            }
+            if (userActiveBorrowsCount(username) >= 5) return {
+                    ok: false,
+                    msg: 'Mencapai batas pinjaman (5 buku)'
+                }
+                // check if user already borrowed same book
+            if (getBorrows().some(x => x.username === username && x.bookId === bookId && !x.returned)) return {
+                ok: false,
+                msg: 'Anda sudah meminjam buku ini'
+            }
+            const borrowDate = new Date()
+            const dueDate = new Date(borrowDate.getTime() + daysToMs(durationDays))
+            const borrows = getBorrows()
+            borrows.push({
+                id: Date.now(),
+                username,
+                bookId,
+                borrowDate: borrowDate.toISOString(),
+                dueDate: dueDate.toISOString(),
+                returned: false
+            })
+            save(K_BORROWS, borrows)
+            return {
+                ok: true
+            }
+        }
+
+        function returnBorrow(borrowId) {
+            const borrows = getBorrows()
+            const rec = borrows.find(x => x.id === borrowId)
+            if (!rec) return {
+                ok: false
+            }
+            rec.returned = true
+            save(K_BORROWS, borrows)
+            return {
+                ok: true
+            }
+        }
+
+        /* ======= UI rendering ======= */
+        function renderBooks(filter = '') {
+            const grid = $('#booksGrid')
+            grid.innerHTML = ''
+            const books = getBooks().filter(b => (b.title + b.author + b.description).toLowerCase().includes(filter.toLowerCase()))
+            const borrows = getBorrows()
+
+            books.forEach(book => {
+                const borrowedCount = borrows.filter(x => x.bookId === book.id && !x.returned).length
+                const available = Math.max(0, book.copies - borrowedCount)
+                const el = document.createElement('div');
+                el.className = 'book'
+                el.innerHTML = `
+          <h4>${escapeHtml(book.title)}</h4>
+          <div class="muted small">${escapeHtml(book.author)}</div>
+          <div style="margin-top:8px" class="small">${escapeHtml(book.description)}</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+            <div class="muted small">Tersedia: <strong>${available}</strong></div>
+            <div>
+              <button class="borrow-btn" data-id="${book.id}">Pinjam</button>
+            </div>
+          </div>
+        `
+                grid.appendChild(el)
+            })
+
+            // bind borrow buttons
+            document.querySelectorAll('.borrow-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = Number(btn.dataset.id)
+                    const cur = getCurrent()
+                    if (!cur) {
+                        showLoginModal('Silakan login atau daftar untuk meminjam');
+                        return
+                    }
+                    showBorrowModal(id)
+                })
+            })
+        }
+
+        function renderProfile() {
+            const area = $('#profileArea')
+            const cur = getCurrent()
+            if (!cur) {
+                area.innerHTML = 'Silakan login untuk melihat profil.';
+                $('#userInfo').textContent = 'Belum masuk';
+                $('#btnLogout').style.display = 'none';
+                $('#btnShowLogin').style.display = 'inline-block';
+                return
+            }
+            area.innerHTML = `<div><strong>${escapeHtml(cur.displayName||cur.username)}</strong></div><div class="muted small">@${escapeHtml(cur.username)}</div>`
+            $('#userInfo').textContent = `Masuk sebagai ${cur.displayName||cur.username}`
+            $('#btnLogout').style.display = 'inline-block'
+            $('#btnShowLogin').style.display = 'none'
+        }
+
+        function renderBorrows() {
+            const cur = getCurrent()
+            const list = $('#borrowList');
+            list.innerHTML = ''
+            if (!cur) {
+                list.innerHTML = '<div class="muted small">Silakan login untuk melihat pinjaman Anda.</div>';
+                return
+            }
+            const items = getBorrows().filter(x => x.username === cur.username)
+            if (items.length === 0) {
+                list.innerHTML = '<div class="muted small">Tidak ada pinjaman.</div>';
+                return
+            }
+            items.filter(x => !x.returned).forEach(b => {
+                const book = getBooks().find(bb => bb.id === b.bookId)
+                const due = new Date(b.dueDate)
+                const daysLeft = Math.ceil((due - new Date()) / (24 * 60 * 60 * 1000))
+                const badge = daysLeft < 0 ? `<span class="badge overdue">Telat ${Math.abs(daysLeft)} hari</span>` : (daysLeft <= 3 ? `<span class="badge due-soon">${daysLeft} hari tersisa</span>` : `<span class="badge">${daysLeft} hari tersisa</span>`)
+                const el = document.createElement('div')
+                el.style.marginBottom = '8px'
+                el.innerHTML = `
+          <div><strong>${escapeHtml(book.title)}</strong> <div class="muted small">${escapeHtml(book.author)}</div></div>
+          <div class="small muted">Dipinjam: ${new Date(b.borrowDate).toLocaleString()} | Jatuh tempo: ${due.toLocaleDateString()}</div>
+          <div style="margin-top:6px">${badge} <button data-return="${b.id}" style="margin-left:8px">Kembalikan</button></div>
+        `
+                list.appendChild(el)
+            })
+
+            // bind return
+            list.querySelectorAll('button[data-return]').forEach(btn => btn.addEventListener('click', () => {
+                const id = Number(btn.dataset.return)
+                if (confirm('Konfirmasi kembalikan buku?')) {
+                    returnBorrow(id);
+                    renderAll();
+                }
+            }))
+        }
+
+        function renderHistory() {
+            const cur = getCurrent()
+            const area = $('#historyArea')
+            if (!cur) {
+                area.innerHTML = 'Silakan login untuk melihat riwayat.';
+                return
+            }
+            const items = getBorrows().filter(x => x.username === cur.username).sort((a, b) => new Date(b.borrowDate) - new Date(a.borrowDate))
+            if (items.length === 0) {
+                area.innerHTML = 'Belum ada riwayat.';
+                return
+            }
+            area.innerHTML = items.map(r => {
+                const book = getBooks().find(bb => bb.id === r.bookId)
+                return `<div style="margin-bottom:8px"><strong>${escapeHtml(book.title)}</strong> - ${new Date(r.borrowDate).toLocaleDateString()} &rarr; ${r.returned? 'Dikembalikan' : 'Belum dikembalikan'}</div>`
+            }).join('')
+        }
+
+        function renderAll() {
+            renderProfile();
+            renderBooks($('#searchInput').value || '');
+            renderBorrows();
+            renderHistory();
+        }
+
+        // Modal helpers
+        function showModal(html, onOk) {
+            $('#modalContent').innerHTML = html;
+            $('#modal').style.display = 'flex';
+            const ok = $('#modalOk');
+            const cancel = $('#modalCancel')
+            const handler = () => {
+                $('#modal').style.display = 'none';
+                ok.removeEventListener('click', handler);
+                cancel.removeEventListener('click', handlerCancel);
+                if (onOk) onOk()
+            }
+            const handlerCancel = () => {
+                $('#modal').style.display = 'none';
+                ok.removeEventListener('click', handler);
+                cancel.removeEventListener('click', handlerCancel)
+            }
+            ok.onclick = handler;
+            cancel.onclick = handlerCancel
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"]/g, c => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "\"": "&quot;"
+            }[c]))
+        }
+
+        // Login/Register modal
+        function showLoginModal(msg) {
+            const html = `
+        <h3>Login / Register</h3>
+        <div class="muted small">${escapeHtml(msg||'Silakan masuk atau buat akun baru.')}</div>
+        <div style="margin-top:10px">
+          <div class="form-row"><label>Username</label><input id="m_username" /></div>
+          <div class="form-row"><label>Nama tampilan</label><input id="m_display" placeholder="Boleh dikosongkan saat login" /></div>
+          <div class="form-row"><label>Password</label><input id="m_password" type="password" /></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+            <button id="m_register">Daftar</button>
+            <button id="m_login" class="primary">Login</button>
+          </div>
+        </div>
+      `
+            showModal(html, () => {})
+            $('#m_register').onclick = () => {
+                const u = $('#m_username').value.trim();
+                const d = $('#m_display').value.trim();
+                const p = $('#m_password').value
+                const res = registerUser(u, d || u, p)
+                alert(res.ok ? 'Berhasil daftar — silakan login' : ('Gagal: ' + res.msg))
+                if (res.ok) { /* auto-fill login */
+                    $('#m_display').value = d;
+                }
+            }
+            $('#m_login').onclick = () => {
+                const u = $('#m_username').value.trim();
+                const p = $('#m_password').value
+                const res = loginUser(u, p)
+                if (!res.ok) return alert('Gagal: ' + res.msg)
+                $('#modal').style.display = 'none'
+                renderAll()
+            }
+        }
+
+        // Borrow modal
+        function showBorrowModal(bookId) {
+            const book = getBooks().find(b => b.id === bookId)
+            if (!book) return
+            const html = `
+        <h3>Pinjam: ${escapeHtml(book.title)}</h3>
+        <div class="muted small">${escapeHtml(book.author)}</div>
+        <div style="margin-top:8px">Pilih durasi pinjam:</div>
+        <div style="margin-top:8px">
+          <select id="m_duration"><option value="7">7 hari</option><option value="14">14 hari</option><option value="21">21 hari</option></select>
+        </div>
+      `
+            showModal(html, () => {})
+            $('#modalOk').onclick = () => {
+                const dur = Number($('#m_duration').value)
+                const cur = getCurrent();
+                const res = borrowBook(cur.username, bookId, dur)
+                if (!res.ok) {
+                    alert('Gagal: ' + res.msg);
+                    return
+                }
+                alert('Berhasil meminjam!')
+                $('#modal').style.display = 'none'
+                renderAll()
+            }
+        }
+
+        // Search
+        $('#searchInput').addEventListener('input', () => renderBooks($('#searchInput').value))
+
+        // Buttons
+        $('#btnShowLogin').addEventListener('click', () => showLoginModal())
+        $('#btnLogout').addEventListener('click', () => {
+            if (confirm('Logout?')) {
+                logout()
+            }
+        })
+
+        // Init render
+        renderAll()
+
+        // Periodic UI refresh for countdowns
+        setInterval(() => {
+            renderBorrows();
+            renderHistory();
+        }, 60 * 1000)
+    </script>
+</body>
+
+</html>
