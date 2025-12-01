@@ -4,32 +4,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perpustakaan Online — Demo</title>
+    <title>Perpustakaan Online — PDM GROUP 2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- Preloader dengan animasi 3D buku -->
+    <!-- Preloader dengan animasi teks -->
     <div id="preloader">
-        <div class="book-3d">
-            <div class="book-cover">Perpustakaan Online</div>
-            <div class="book-pages"></div>
+        <div class="text-animation-container">
+            <div class="animated-text">
+                <span class="char">M</span>
+                <span class="char">E</span>
+                <span class="char">M</span>
+                <span class="char">B</span>
+                <span class="char">A</span>
+                <span class="char">C</span>
+                <span class="char">A</span>
+                <span class="char space"></span>
+                <span class="char">T</span>
+                <span class="char">I</span>
+                <span class="char">D</span>
+                <span class="char">A</span>
+                <span class="char">K</span>
+                <span class="char space"></span>
+                <span class="char">H</span>
+                <span class="char">A</span>
+                <span class="char">R</span>
+                <span class="char">U</span>
+                <span class="char">S</span>
+                <span class="char space"></span>
+                <span class="char">S</span>
+                <span class="char">E</span>
+                <span class="char">C</span>
+                <span class="char">A</span>
+                <span class="char">R</span>
+                <span class="char">A</span>
+                <span class="char space"></span>
+                <span class="char">L</span>
+                <span class="char">A</span>
+                <span class="char">N</span>
+                <span class="char">G</span>
+                <span class="char">S</span>
+                <span class="char">U</span>
+                <span class="char">N</span>
+                <span class="char">G</span>
+                <span class="char">!</span>
+            </div>
+            <div class="subtitle-animation">Perpustakaan Online PDM GROUP 2</div>
         </div>
-        <div class="loading-text">Memuat koleksi buku...</div>
     </div>
 
     <header>
         <div class="brand">
-            <div class="logo">LB</div>
+            <div class="logo-container">
+                <img src="assets/image/a.png" alt="Logo Perpustakaan" class="logo-img">
+            </div>
             <div>
-                <div class="title">Perpustakaan Online — Demo</div>
+                <div class="title">Perpustakaan Online — PDM GROUP 2</div>
                 <div class="subtitle">Daftarkan akun, login, dan pinjam buku secara digital</div>
             </div>
         </div>
 
+
         <div class="controls">
             <div id="userInfo" class="muted small">Belum masuk</div>
             <button id="btnShowLogin">Login / Register</button>
+            <button id="btnDashboard" style="display:none; background: #3498db; border: none; color: white;">Dashboard</button>
             <button id="btnLogout" style="display:none">Logout</button>
             <button id="btnEditBooks" style="background: #27ae60; border: none; color: white; display: none;">Edit Buku</button>
             <button id="btnResetData" style="background: var(--danger); border: none; color: white;">Reset Data</button>
@@ -49,12 +89,14 @@
             </div>
 
             <div class="card">
-                <h3>Aturan Pinjam</h3>
+                <h3>Aturan Pinjam & Penalty</h3>
                 <ul class="muted small">
                     <li>Harus memiliki akun untuk meminjam</li>
                     <li>Durasi pinjam pilihan: 1 hingga 7 hari</li>
                     <li>Maksimum pinjaman bersamaan: 5 buku</li>
-                    <li>Bisa mengembalikan lebih awal</li>
+                    <li>Penalty: Rp 2.000 per hari keterlambatan</li>
+                    <li>Maksimal keterlambatan: 30 hari (akun diblokir)</li>
+                    <li>Penalty harus dibayar untuk peminjaman baru</li>
                 </ul>
             </div>
         </aside>
@@ -69,12 +111,23 @@
                             <div class="muted small">Temukan buku yang Anda sukai</div>
                         </div>
                         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-                            <input id="searchInput" placeholder="Cari judul atau penulis" style="width:200px" />
+                            <input id="searchInput" placeholder="Cari judul, penulis, atau genre" style="width:200px" />
                             <select id="genreFilter" style="width:200px">
                                 <option value="">Semua Genre</option>
                             </select>
                             <button id="randomizeBtn">🔀 Acak Buku</button>
+                            <button id="clearCategoryFilter" style="display:none; background: var(--danger); color: white; border: none;">
+                                ✕ Hapus Filter
+                            </button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Kategori Buku dengan gambar -->
+                <div class="card categories-section">
+                    <h3 style="margin:0 0 16px 0">📚 Kategori Buku</h3>
+                    <div class="categories-grid" id="categoriesGrid">
+                        <!-- Kategori akan diisi oleh JavaScript -->
                     </div>
                 </div>
 
@@ -147,10 +200,26 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Halaman Dashboard -->
+            <div id="dashboardPage" class="page">
+                <div class="card">
+                    <button id="backToCatalogFromDashboard" class="back-btn">&larr; Kembali ke Katalog</button>
+                    <h2>Dashboard Akun</h2>
+                    <div id="dashboardContent">
+                        <!-- Dashboard akan diisi JavaScript -->
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
-    <footer>Demo: data disimpan di browser (localStorage). Untuk produksi butuh backend dan database nyata.</footer>
+    <footer>
+        <div>Data disimpan di browser (localStorage) ya!</div>
+        <div class="muted small" style="margin-top: 8px;">
+            Penalty: Rp 2.000 per hari keterlambatan | Maksimal keterlambatan: 30 hari
+        </div>
+    </footer>
 
     <!-- Modal Terms & Conditions -->
     <div id="termsModal" class="modal">

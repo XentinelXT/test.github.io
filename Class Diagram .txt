@@ -1,0 +1,49 @@
+class User {
+    - username: string
+    - displayName: string
+    - passwordHash: string
+    - joinDate: Date
+    - totalBorrows: number
+    - totalPenalty: number
+    - totalLateDays: number
+}
+
+class Book {
+    - id: number
+    - title: string
+    - author: string
+    - description: string
+    - copies: number
+    - image: string
+    - pdfUrl: string
+    - genre: string
+    - isTrending: boolean
+    - isRecommended: boolean
+    - availableCopies(): number
+}
+
+class BorrowRecord {
+    - id: number
+    - username: string
+    - bookId: number
+    - borrowDate: Date
+    - dueDate: Date
+    - returned: boolean
+    - returnDate: Date
+    - lateDays: number
+    - penaltyAmount: number
+}
+
+class LibrarySystem {
+    - users: User[]
+    - books: Book[]
+    - borrows: BorrowRecord[]
+    
+    + registerUser()
+    + loginUser()
+    + borrowBook()
+    + returnBook()
+    + calculatePenalty()
+    + searchBooks()
+    + filterByCategory()
+}

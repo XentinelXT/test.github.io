@@ -1,0 +1,14 @@
+Terdapat pada
+
+const K_USERS = 'lib_users'
+const K_BOOKS = 'lib_books'
+const K_BORROWS = 'lib_borrows'
+const K_CURRENT = 'lib_currentUser'
+const load = (k, fallback) => {
+    const v = localStorage.getItem(k);
+    return v ? JSON.parse(v) : fallback;
+}
+
+const save = (k, v) => {
+    localStorage.setItem(k, JSON.stringify(v));
+}
